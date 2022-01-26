@@ -16,5 +16,5 @@ Parameters:
 Use it like this:
 
 ```
-./8080-to-z80 -v CODE_START=23 -v CODE_END=46 < ../tinybasic/tinybasicv3.8080 > ../tinybasic/tinybasicv3.z80
+./8080-to-z80 -v CODE_START=23 -v CODE_END=47 < ../tinybasic/tinybasicv3.8080 > ../tinybasic/tinybasicv3.z80
 ```

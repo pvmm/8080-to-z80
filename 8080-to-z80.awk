@@ -19,14 +19,14 @@ function cut(line,    n) {
     } else {
         pre = substr(line, 1, CODE_START - 1)
         tmp = substr(line, CODE_START)
-	pos = ""
+        pos = ""
     }
     n = index(tmp, COMMENT_SEP)
     if (n > 0) {
-	cmt = substr(tmp, n)
+        cmt = substr(tmp, n)
         tmp = substr(tmp, 1, n - 1)
     } else {
-	cmt = ""
+        cmt = ""
     }
     return tmp
 }
@@ -61,25 +61,24 @@ function print_all() {
     if (UNCLUTTERED) {
         gsub(/\s*$/, "", $0)
         print $0
-	return
+        return
     }
 
     $0 = sprintf("%s%s", $0, cmt)
     gsub(/\s*$/, "", $0)
     gsub(/\s*$/, "", pos)
 
-    if (length(pre) + length($0) + length(pos) > 0) {
-        tmp = sprintf("%s%*s%s", pre, CODE_START - CODE_END - 1, $0, pos)
-	gsub(/\s*$/, tmp)
-	print tmp
+    if (length(pos) == 0) {
+        print $0
     } else {
-        print ""
+        tmp = sprintf("%*s" COMMENT_SEP " %s", CODE_START - CODE_END - 1, $0, pos)
+        print tmp
     }
 }
 
 
 # Ignore 8080 comments
-/^\*/					{ if (!UNCLUTTERED) { print $0 } next; }
+/^\s*\*/				{ if (!UNCLUTTERED) { print COMMENT_SEP " " $0 } next; }
 
 # Remove comments from scanning
 					{ $0 = cut($0) }
