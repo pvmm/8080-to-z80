@@ -83,11 +83,18 @@ function print_all() {
 # Remove comments from scanning
 					{ $0 = cut($0) }
 
+# META
+/\<ORG\>/				{ gen(@/\<ORG\>\s+(\S+)/, "ORG \\1"); print_all(); next; }
+/\<DS\>/				{ gen(@/\<DS\>\s+(\S+)/, "DS \\1"); print_all(); next; }
+/\<DB\>/				{ gen(@/\<DB\>\s+(\S+)/, "DB \\1"); print_all(); next; }
+/\<EQU\>/				{ gen(@/\<EQU\>\s+(\S+)/, "EQU \\1"); print_all(); next; }
+
 # ADD
 /\<ADD\>/				{ gen(@/\<ADD\>\s+(\S+)/, "ADD A,\\1"); reg8($0); print_all(); next; }
 /\<ADC\>/				{ gen(@/\<ADC\>\s+(\S+)/, "ADC A,\\1"); reg8($0); print_all(); next; }
+/\<ADI\>/ 				{ gen(@/\<ADI\>\s+(\S+)/, "ADD A,\\1"); print_all(); next; }
 /\<ACI\>/ 				{ gen(@/\<ACI\>\s+(\S+)/, "ADC \\1"); print_all(); next; }
-/\<DAD\>/                               { gen(@/\<ADD\>\s+(\S+)/, "ADD HL,\\1") }
+/\<DAD\>/                               { gen(@/\<DAD\>\s+(\S+)/, "ADD HL,\\1") }
 
 # SUB
 /\<SUB\>/ 				{ gen(@/\<SUB\>\s+(\S+)/, "SUB \\1"); reg8($0); print_all(); next; }
@@ -121,35 +128,37 @@ function print_all() {
 
 # JP
 /\<JP\>/				{ gen(@/\<JP\>\s+(\S+)/, "JP P,\\1") }
-/\<(JMP)\>/				{ gen(@/\<JMP\>/, "JP") }
+/\<JMP\>/				{ gen(@/\<JMP\>\s+(\S+)/, "JP \\1") }
 /\<JNZ\>/				{ gen(@/\<JNZ\>\s+(\S+)/, "JP NZ,\\1") }
 /\<JZ\>/				{ gen(@/\<JZ\>\s+(\S+)/, "JP Z,\\1") }
 /\<JNC\>/				{ gen(@/\<JNC\>\s+(\S+)/, "JP NC,\\1") }
-/\<JC\>/				{ gen(@/\<JNC\>\s+(\S+)/, "JP C,\\1") }
+/\<JC\>/				{ gen(@/\<JC\>\s+(\S+)/, "JP C,\\1") }
 /\<JPO\>/				{ gen(@/\<JPO\>\s+(\S+)/, "JP O,\\1") }
 /\<JPE\>/				{ gen(@/\<JPE\>\s+(\S+)/, "JP PE,\\1") }
 /\<JM\>/				{ gen(@/\<JM\>\s+(\S+)/, "JP M,\\1") }
-/\<PCHL\>/				{ gen(@/\<PCHL\>/, "JP (HL)") }
+/\<PCHL\>/				{ gen(@/\<PCHL\>\s*(\S*)/, "JP (HL)") }
 
 # CALL
+/\<CALL\>/				{ gen(@/\<CALL\>\s+(\S+)/, "CALL \\1") }
 /\<CNZ\>/				{ gen(@/\<CNZ\>\s+(\S+)/, "CALL NZ,\\1") }
 /\<CZ\>/				{ gen(@/\<CZ\>\s+(\S+)/, "CALL Z,\\1") }
 /\<CNC\>/				{ gen(@/\<CNC\>\s+(\S+)/, "CALL NC,\\1") }
-/\<CC\>/				{ gen(@/\<CNC\>\s+(\S+)/, "CALL C,\\1") }
+/\<CC\>/				{ gen(@/\<CC\>\s+(\S+)/, "CALL C,\\1") }
 /\<CPO\>/				{ gen(@/\<CPO\>\s+(\S+)/, "CALL O,\\1") }
 /\<CPE\>/				{ gen(@/\<CPE\>\s+(\S+)/, "CALL PE,\\1") }
 /\<CP\>/				{ gen(@/\<CP\>\s+(\S+)/, "CALL P,\\1") }
 /\<CM\>/				{ gen(@/\<CM\>\s+(\S+)/, "CALL M,\\1") }
 
 # RET
-/\<RNZ\>/				{ gen(@/\<RNZ\>\s+(\S+)/, "RET NZ,\\1") }
-/\<RZ\>/				{ gen(@/\<RZ\>\s+(\S+)/, "RET Z,\\1") }
-/\<RNC\>/				{ gen(@/\<RNC\>\s+(\S+)/, "RET NC,\\1") }
-/\<RC\>/				{ gen(@/\<RNC\>\s+(\S+)/, "RET C,\\1") }
-/\<RPO\>/				{ gen(@/\<RPO\>\s+(\S+)/, "RET O,\\1") }
-/\<RPE\>/				{ gen(@/\<RPE\>\s+(\S+)/, "RET PE,\\1") }
-/\<RP\>/				{ gen(@/\<RP\>\s+(\S+)/, "RET P,\\1") }
-/\<RM\>/				{ gen(@/\<RM\>\s+(\S+)/, "RET M,\\1") }
+/\<RET\>/				{ gen(@/\<RET\>\s*(\S*)/, "RET") }
+/\<RNZ\>/				{ gen(@/\<RNZ\>\s*(\S*)/, "RET NZ") }
+/\<RZ\>/				{ gen(@/\<RZ\>\s*(\S*)/, "RET Z") }
+/\<RNC\>/				{ gen(@/\<RNC\>\s*(\S*)/, "RET NC") }
+/\<RC\>/				{ gen(@/\<RC\>\s*(\S*)/, "RET C") }
+/\<RPO\>/				{ gen(@/\<RPO\>\s*(\S*)/, "RET O") }
+/\<RPE\>/				{ gen(@/\<RPE\>\s*(\S*)/, "RET PE") }
+/\<RP\>/				{ gen(@/\<RP\>\s*(\S*)/, "RET P") }
+/\<RM\>/				{ gen(@/\<RM\>\s*(\S*)/, "RET M") }
 
 # LD
 /\<MOV\>\s*\S+\s*,\s*\<M\>/		{ gen(@/\<MOV\>\s+(\S+)\s*,\s*\<M\>/, "LD \\1,(HL)"); print_all(); next; }
@@ -160,15 +169,15 @@ function print_all() {
 /\<LXI\>/				{ gen(@/\<LXI\>\s+/, "LD ") }
 /\<LHLD\>/				{ gen(@/\<LHLD\>\s*/, "LD HL,") }
 /\<SHLD\>/				{ gen(@/\<SHLD\>\s+(\S+)/, "LD \\1,HL") }
-/\<SPHL\>/				{ gen(@/\<SPHL\>\s*/, "LD SP,") }
+/\<SPHL\>/				{ gen(@/\<SPHL\>\s*(\S*)/, "LD SP,HL") }
 /\<LDAX\>/				{ gen(@/\<LDAX\>\s*/, "LD A,"); ldax($0); print_all(); next; }
 /\<LDA\>/				{ gen(@/\<LDA\>\s*/, "LD A,") }
 /\<STAX\>/				{ gen(@/\<STAX\>\s+(\S+)/, "LD \\1,A"); stax($0); print_all(); next; }
 /\<STA\>/				{ gen(@/\<STA\>\s+(\S+)/, "LD (\\1),A"); print_all(); next; }
 
 # EX
-/\<XCHG\>/				{ gen(@/\<XCHG\>\s*,?/, "EX DE,HL"); print_all(); next; }
-/\<XTHL\>/				{ gen(@/\<XTHL\>\s*,?/, "EX (SP),HL"); print_all(); next; }
+/\<XCHG\>/				{ gen(@/\<XCHG\>\s*(\S*)/, "EX DE,HL"); print_all(); next; }
+/\<XTHL\>/				{ gen(@/\<XTHL\>\s*(\S*)/, "EX (SP),HL"); print_all(); next; }
 
 # RST
 /\<RST\>/				{ arg = get_arg(@/[0-7]/); gen(@/\<RST\>\s*([0-7])\>/, sprintf("RST %x", arg * 8)); print_all(); next; }
@@ -179,17 +188,18 @@ function print_all() {
 # OUT
 /\<OUT\>/				{ gen(@/\<OUT\>\s*(\S+)/, "OUT (\\1),A"); print_all(); next; }
 
-# POP
+# STACK
+/\<PUSH\>/				{ gen(@/\<PUSH\>\s+/, "PUSH ") }
 /\<POP\>/				{ gen(@/\<POP\>\s+/, "POP ") }
 
 # Parameterless
-/\<CMA\>/				{ gen(@/\<CMA\>\s+/, "CPL") }
-/\<STC\>/				{ gen(@/\<STC\>\s+/, "SCF") }
-/\<CMC\>/				{ gen(@/\<CMC\>\s+/, "CCF") }
-/\<RLC\>/				{ gen(@/\<RLC\>\s+/, "RLCA") }
-/\<RRC\>/				{ gen(@/\<RRC\>\s+/, "RRCA") }
-/\<RAL\>/				{ gen(@/\<RAL\>\s+/, "RLA") }
-/\<RAR\>/				{ gen(@/\<RAR\>\s+/, "RRA") }
+/\<CMA\>/				{ gen(@/\<CMA\>\s*(\S*)/, "CPL") }
+/\<STC\>/				{ gen(@/\<STC\>\s*(\S*)/, "SCF") }
+/\<CMC\>/				{ gen(@/\<CMC\>\s*(\S*)/, "CCF") }
+/\<RLC\>/				{ gen(@/\<RLC\>\s*(\S*)/, "RLCA") }
+/\<RRC\>/				{ gen(@/\<RRC\>\s*(\S*)/, "RRCA") }
+/\<RAL\>/				{ gen(@/\<RAL\>\s*(\S*)/, "RLA") }
+/\<RAR\>/				{ gen(@/\<RAR\>\s*(\S*)/, "RRA") }
 
 # Operators
 /\<M\>/					{ sub(@/\<A\>/, "(HL)") }
