@@ -102,10 +102,10 @@ function print_all() {
 /\<DAD\>/                               { gen(@/\<DAD\>\s+(\S+)/, "ADD HL,\\1") }
 
 # SUB
-/\<SUB\>/ 				{ gen(@/\<SUB\>\s+(\S+)/, "SUB \\1"); reg8(); print_all(); next; }
-/\<SUI\>/ 				{ gen(@/\<SUI\>\s+(\S+)/, "SUB \\1"); imm8(); print_all(); next; }
-/\<SBB\>/				{ gen(@/\<SBB\>\s+(\S+)/, "SBC \\1"); reg8(); print_all(); next; }
-/\<SBI\>/				{ gen(@/\<SBI\>\s+(\S+)/, "SBC \\1"); imm8(); print_all(); next; }
+/\<SUB\>/ 				{ gen(@/\<SUB\>\s+(\S+)/, "SUB A,\\1"); reg8(); print_all(); next; }
+/\<SUI\>/ 				{ gen(@/\<SUI\>\s+(\S+)/, "SUB A,\\1"); imm8(); print_all(); next; }
+/\<SBB\>/				{ gen(@/\<SBB\>\s+(\S+)/, "SBC A,\\1"); reg8(); print_all(); next; }
+/\<SBI\>/				{ gen(@/\<SBI\>\s+(\S+)/, "SBC A,\\1"); imm8(); print_all(); next; }
 
 # INC
 /\<INX\>/				{ gen(@/\<INX\>\s+(\S+)/, "INC \\1") }
@@ -187,7 +187,7 @@ function print_all() {
 /\<RST\>/				{ arg = get_arg(@/[0-7]/); gen(@/\<RST\>\s*([0-7])\>/, sprintf("RST %x", arg * 8)); print_all(); next; }
 
 # IN
-/\<IN\>/				{ gen(@/\<IN\>\s*(\S+)/, "IN A,\\1"); imm8(); print_all(); next; }
+/\<IN\>/				{ gen(@/\<IN\>\s*(\S+)/, "IN A,(\\1)"); imm8(); print_all(); next; }
 
 # OUT
 /\<OUT\>/				{ gen(@/\<OUT\>\s*(\S+)/, "OUT (\\1),A"); imm8(); print_all(); next; }
