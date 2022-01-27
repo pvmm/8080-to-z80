@@ -171,8 +171,8 @@ function print_all() {
 /\<MVI\>/				{ gen(@/\<MVI\>\s+(\S+)\s*,\s*(\S+)/, "LD \\1,\\2"); imm8(); print_all(); next; }
 /\<MOV\>/				{ gen(@/\<MOV\>\s+/, "LD ") }
 /\<LXI\>/				{ gen(@/\<LXI\>\s+/, "LD ") }
-/\<LHLD\>/				{ gen(@/\<LHLD\>\s*/, "LD HL,") }
-/\<SHLD\>/				{ gen(@/\<SHLD\>\s+(\S+)/, "LD \\1,HL") }
+/\<LHLD\>/				{ gen(@/\<LHLD\>\s*(\S+)/, "LD HL,(\\1)") }
+/\<SHLD\>/				{ gen(@/\<SHLD\>\s+(\S+)/, "LD (\\1),HL") }
 /\<SPHL\>/				{ gen(@/\<SPHL\>\s*(\S*)/, "LD SP,HL") }
 /\<LDAX\>/				{ gen(@/\<LDAX\>\s*/, "LD A,"); ldax(); print_all(); next; }
 /\<LDA\>/				{ gen(@/\<LDA\>\s*/, "LD A,") }
